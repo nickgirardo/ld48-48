@@ -21,6 +21,7 @@ export const keysDown: { [key in Keys]: boolean } = {
     fire: false,
 };
 
+// TODO should be able to include arrow keys as well
 let keyMap = new Map<number, Keys>();
 
 keyMap.set(87, Keys.UP);
