@@ -22,8 +22,15 @@ const scene = new Scene();
 const char = new Char();
 scene.addEntity(char);
 
-scene.update();
-scene.update();
+// TODO resize to 16x9 (or 4x3 or something)
+// TODO resize on init and window resize event
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-scene.removeEntity(char);
-scene.update();
+const tick = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    scene.update();
+    window.requestAnimationFrame(tick);
+};
+
+window.requestAnimationFrame(tick);

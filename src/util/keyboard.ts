@@ -1,7 +1,7 @@
 // Keyboard handler util
 // Note that the actual state of the keyboard isn't being exported yet
 
-enum Keys {
+export enum Keys {
     UP = 'up',
     DOWN = 'down',
     LEFT = 'left',
@@ -11,7 +11,7 @@ enum Keys {
     FIRE = 'fire',
 };
 
-const keysDown: { [key in Keys]: boolean } = {
+export const keysDown: { [key in Keys]: boolean } = {
     up: false,
     down: false,
     left: false,
