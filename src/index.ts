@@ -18,8 +18,12 @@ init();
 // NOTE bellow is just testing some basic scene shit
 // TODO remove
 const scene = new Scene();
+// scene.ground = Ground();
 
 const char = new Char();
+
+char.pos = [50, 50];
+
 scene.addEntity(char);
 
 // TODO resize to 16x9 (or 4x3 or something)
@@ -28,7 +32,8 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const tick = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'grey';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     scene.update();
     window.requestAnimationFrame(tick);
 };

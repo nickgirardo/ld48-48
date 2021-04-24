@@ -1,8 +1,20 @@
 import { Entity } from './Entity';
+import { Ground } from './Ground';
 
-export class Scene {
+type SceneType = {
+    ground: Ground;
+    entities: Entity[];
+    addEntity: (entity: Entity) => void;
+    removeEntity: (entity: Entity) => void;
+    update: () => void;
+};
+
+export class Scene<SceneType> {
+    // TODO
+    ground: Ground;
     entities: Entity[] = [];
     addEntity = (entity: Entity) => {
+        entity.scene = this;
         this.entities.push(entity);
     };
     removeEntity = (entity: Entity) => {
