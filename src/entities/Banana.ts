@@ -15,6 +15,11 @@ enum BananaAnim {
     DEAD,
 }
 
+enum Facing {
+    LEFT,
+    RIGHT,
+}
+
 export class Banana implements Entity {
     scene: Scene | undefined;
     pos: Vec2.Vec2 = [0, 0];
@@ -23,7 +28,7 @@ export class Banana implements Entity {
     friction: Vec2.Vec2 =  [0.3, 1];
     speed: number = 8;
 
-    lastJump: 'left' | 'right' = 'left';
+    lastJump: Facing = Facing.LEFT;
     lastJumpFrame: number = 0;
     lastGroundedFrame: number = -1;
 
@@ -56,7 +61,9 @@ export class Banana implements Entity {
             if (this.lastGroundedFrame < this.lastJumpFrame) {
                 this.animState = BananaAnim.IDLE;
                 this.lastGroundedFrame = window.frame;
-                this.lastJump = this.lastJump === 'left' ? 'right' : 'left';
+                this.lastJump = this.lastJump === Facing.LEFT ?
+                    Facing.RIGHT :
+                    Facing.LEFT;
             }
 
             // About to jump, anticipation here
@@ -71,7 +78,7 @@ export class Banana implements Entity {
             }
         } else {
             // The banana is not grounded
-            if (this.lastJump === 'left') {
+            if (this.lastJump === Facing.LEFT) {
                 this.vel = Vec2.add(this.vel, [this.speed, 0]);
             } else {
                 this.vel = Vec2.add(this.vel, [-this.speed, 0]);
