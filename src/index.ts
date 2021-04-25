@@ -25,14 +25,25 @@ const scene = new Scene(ground);
 
 const char = new Char();
 
+function resize() {
+    const widthAspect = 16;
+    const heightAspect = 9;
+    // get the max size that fits both width and height by finding the min scale
+    const canvasScale = Math.min(window.innerWidth / widthAspect, window.innerHeight / heightAspect);
+
+    // now set canvas size and resolution to the new scale
+    canvas.width = Math.floor(widthAspect * canvasScale);;
+    canvas.height = Math.floor(heightAspect * canvasScale);
+    canvas.style.width = `${canvas.width}px`
+    canvas.style.height = `${canvas.height}px`
+}
+
+resize()
+window.addEventListener('resize', resize);
+
 char.pos = [350, 250];
 
 scene.addEntity(char);
-
-// TODO resize to 16x9 (or 4x3 or something)
-// TODO resize on init and window resize event
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
 
 const tick = () => {
     ctx.fillStyle = 'grey';
