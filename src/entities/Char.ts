@@ -15,8 +15,8 @@ export class Char extends Entity {
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [32, 64];
     vel: Vec2.Vec2 = [0, 0];
-    friction: Vec2.Vec2 =  [0.4, 1];
-    speed: number = 5;
+    friction: Vec2.Vec2 =  [0.3, 1];
+    speed: number = 8;
 
     // TODO this might be helpful
     // kind = EntityTypes.Char;
@@ -29,8 +29,8 @@ export class Char extends Entity {
         // Normal gravity
         const fGravity: Vec2.Vec2 = [0, 1.5];
         // Gravity if the player holds jump (because video games)
-        const fGravityJumping: Vec2.Vec2 = [0, 1.2];
-        const fJump: Vec2.Vec2 = [0, -22];
+        const fGravityJumping: Vec2.Vec2 = [0, 1.4];
+        const fJump: Vec2.Vec2 = [0, -20];
 
         if (!this.scene)
             return;
@@ -46,7 +46,6 @@ export class Char extends Entity {
 
         // If the character is grounded they can jump
         const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
-        console.log(grounded);
         if (grounded && keysDown[Keys.JUMP])
             this.vel = Vec2.add(this.vel, fJump);
 

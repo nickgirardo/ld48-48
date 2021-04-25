@@ -28,8 +28,8 @@ keyMap.set(87, Keys.UP);
 keyMap.set(83, Keys.DOWN);
 keyMap.set(65, Keys.LEFT);
 keyMap.set(68, Keys.RIGHT);
-keyMap.set(74, Keys.JUMP);
-keyMap.set(75, Keys.SWING);
+keyMap.set(75, Keys.JUMP);
+keyMap.set(74, Keys.SWING);
 keyMap.set(76, Keys.FIRE);
 
 // Set up keyboard event listeners
