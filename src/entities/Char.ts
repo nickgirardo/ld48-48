@@ -70,7 +70,7 @@ export class Char implements Entity {
                 return;
 
             // TODO lose health
-            this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
+           this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
             this.invincibility = 120;
             this.stun = 30;
         };
@@ -84,8 +84,14 @@ export class Char implements Entity {
                     case EntityTypes.CHAR:
                         return;
                     case EntityTypes.BANANA:
+                    case EntityTypes.TOMATO:
                         // TODO lose health
                         takeHit(e);
+                        return;
+                    case EntityTypes.VOMMIT:
+                        // TODO lose health
+                        takeHit(e);
+                        this.scene!.removeEntity(e);
                         return;
                 }
             });

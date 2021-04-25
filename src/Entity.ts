@@ -14,4 +14,6 @@ export interface Entity {
 export enum EntityTypes {
     CHAR,
     BANANA,
+    TOMATO,
+    VOMMIT,
 }
