@@ -19,7 +19,8 @@ export enum EntityTypes {
     BANANA,
     TOMATO,
 
-    // Projectiles
+    // Projectiles/ Weapons
     VOMMIT,
     NAIL,
+    SHOVEL,
 }

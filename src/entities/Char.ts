@@ -6,6 +6,7 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
+import { Shovel } from './Shovel';
 import { Nail } from './Nail';
 
 enum CharAnim {
@@ -159,22 +160,33 @@ export class Char implements Entity {
                 this.vel[1] = Math.min(this.vel[1], fJump);
             }
 
-            // TODO check if player has nails
-            if (keysDown[Keys.FIRE] &&
-                this.lastAttackFrame + fireDelay[this.lastAttack] < window.frame
-            ) {
-                this.lastAttack = Attacks.SLING_SHOT;
-                this.lastAttackFrame = window.frame;
+            // Player not in attacking delay
+            // TODO queue attacks? Almost definitely not lul
+            if (this.lastAttackFrame + fireDelay[this.lastAttack] < window.frame) {
+                if (keysDown[Keys.SWING]) {
+                    this.lastAttack = Attacks.SHOVEL;
+                    this.lastAttackFrame = window.frame;
 
-                const nail = new Nail();
-                nail.pos = Vec2.clone(this.pos);
-                nail.pos = this.facing === Facing.LEFT ?
-                    Vec2.add(nail.pos, [-40, 20]) :
-                    Vec2.add(nail.pos, [20, 20]);
-                nail.vel = this.facing === Facing.LEFT ?
-                    [-nail.speed, 0] :
-                    [nail.speed, 0];
-                this.scene.addEntity(nail);
+                    const shovel = new Shovel(this);
+                    shovel.offset = this.facing === Facing.LEFT ?
+                        [-60, 30] :
+                        [40, 30];
+                    this.scene.addEntity(shovel);
+                } else if (keysDown[Keys.FIRE]) {
+                    // TODO check if player has nails
+                    this.lastAttack = Attacks.SLING_SHOT;
+                    this.lastAttackFrame = window.frame;
+
+                    const nail = new Nail();
+                    nail.pos = Vec2.clone(this.pos);
+                    nail.pos = this.facing === Facing.LEFT ?
+                        Vec2.add(nail.pos, [-40, 20]) :
+                        Vec2.add(nail.pos, [20, 20]);
+                    nail.vel = this.facing === Facing.LEFT ?
+                        [-nail.speed, 0] :
+                        [nail.speed, 0];
+                    this.scene.addEntity(nail);
+                }
             }
 
             // TODO Set attack animation
