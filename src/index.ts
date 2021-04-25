@@ -13,6 +13,7 @@ const ctx: CanvasRenderingContext2D = canvas.getContext('2d')!;
 // Putting these on the global window object for the sake of time
 window.canvas = canvas;
 window.ctx = ctx;
+window.frame = 0;
 
 // Set up keyboard listeners
 init();
@@ -38,6 +39,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const tick = () => {
+    window.frame++;
     ctx.fillStyle = 'grey';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     scene.update();

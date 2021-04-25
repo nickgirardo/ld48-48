@@ -25,8 +25,6 @@ export class Banana extends Entity {
     }
 
     update() {
-        const fJump: Vec2.Vec2 = [0, -20];
-
         if (!this.scene)
             return;
 
@@ -37,6 +35,13 @@ export class Banana extends Entity {
         // different entities different gravities?
         const fGravity: Vec2.Vec2 = [0, 1.5];
         this.vel = Vec2.add(this.vel, fGravity);
+
+        const fJump: Vec2.Vec2 = [0, -20];
+        const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
+        console.log(window.frame, window.frame % 120);
+        if (grounded && (window.frame % 120 === 0))
+            this.vel = Vec2.add(this.vel, fJump);
+
 
         // Friction
         this.vel = Vec2.vMult(this.vel, this.friction);
