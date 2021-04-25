@@ -5,5 +5,6 @@ declare global {
     interface Window {
         canvas: HTMLCanvasElement,
         ctx: CanvasRenderingContext2D,
+        frame: number,
     }
 }
