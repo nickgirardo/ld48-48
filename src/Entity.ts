@@ -12,8 +12,14 @@ export interface Entity {
 }
 
 export enum EntityTypes {
+    // The player character
     CHAR,
+
+    // Enemies
     BANANA,
     TOMATO,
+
+    // Projectiles
     VOMMIT,
+    NAIL,
 }

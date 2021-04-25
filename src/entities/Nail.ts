@@ -11,8 +11,8 @@ enum Facing {
     RIGHT,
 }
 
-export class Vommit implements Entity {
-    kind = EntityTypes.VOMMIT;
+export class Nail implements Entity {
+    kind = EntityTypes.NAIL;
     scene: Scene | undefined;
 
     pos: Vec2.Vec2 = [0, 0];
@@ -20,12 +20,12 @@ export class Vommit implements Entity {
     vel: Vec2.Vec2 = [0, 0];
     speed: number = 8;
 
-    lifetime: number = 60;
+    lifetime: number = 90;
 
     facing: Facing = Facing.LEFT;
 
     render() {
-        window.renderer.debug(this.getCollisionBounds(), 'purple');
+        window.renderer.debug(this.getCollisionBounds(), 'green');
     }
 
     update() {
@@ -34,6 +34,7 @@ export class Vommit implements Entity {
 
         const ground = this.scene.ground;
 
+        // TODO should nails have lifetimes?
         this.lifetime--;
         if (!this.lifetime)
             this.scene.removeEntity(this);

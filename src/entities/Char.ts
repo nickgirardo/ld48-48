@@ -6,6 +6,8 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
+import { Nail } from './Nail';
+
 enum CharAnim {
     IDLE,
     RUNNING,
@@ -22,6 +24,18 @@ enum Facing {
     LEFT,
     RIGHT,
 }
+
+enum Attacks {
+    SHOVEL,
+    SLING_SHOT,
+    NAIL_GUN,
+};
+
+const fireDelay: {[a in Attacks]: number } = {
+    [Attacks.SHOVEL]: 30,
+    [Attacks.SLING_SHOT]: 30,
+    [Attacks.NAIL_GUN]: 15,
+};
 
 export class Char implements Entity {
     kind = EntityTypes.CHAR;
@@ -45,6 +59,9 @@ export class Char implements Entity {
     facing: Facing = Facing.RIGHT;
     lastJumpFrame: number = 0;
     lastGroundedFrame: number = -1;
+    lastAttackFrame: number = 0;
+
+    lastAttack: Attacks = Attacks.SHOVEL;
 
 
     render() {
@@ -141,6 +158,26 @@ export class Char implements Entity {
                 this.animState = CharAnim.JUMPING;
                 this.vel[1] = Math.min(this.vel[1], fJump);
             }
+
+            // TODO check if player has nails
+            if (keysDown[Keys.FIRE] &&
+                this.lastAttackFrame + fireDelay[this.lastAttack] < window.frame
+            ) {
+                this.lastAttack = Attacks.SLING_SHOT;
+                this.lastAttackFrame = window.frame;
+
+                const nail = new Nail();
+                nail.pos = Vec2.clone(this.pos);
+                nail.pos = this.facing === Facing.LEFT ?
+                    Vec2.add(nail.pos, [-40, 20]) :
+                    Vec2.add(nail.pos, [20, 20]);
+                nail.vel = this.facing === Facing.LEFT ?
+                    [-nail.speed, 0] :
+                    [nail.speed, 0];
+                this.scene.addEntity(nail);
+            }
+
+            // TODO Set attack animation
         }
 
         if (this.stun) {
