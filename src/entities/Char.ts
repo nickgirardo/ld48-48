@@ -4,24 +4,21 @@ import { Scene } from '../Scene';
 import { Keys, keysDown } from '../util/keyboard';
 import * as Vec2 from '../Vec2';
 
-import {
-    CollisionBoundry,
-    drawCollisionBounds,
-} from '../CollisionBoundry';
+import { CollisionBoundry } from '../CollisionBoundry';
 
 export class Char extends Entity {
     scene: Scene | undefined;
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [32, 64];
     vel: Vec2.Vec2 = [0, 0];
-    friction: Vec2.Vec2 =  [0.3, 1];
+    friction: Vec2.Vec2 =  [0.35, 1];
     speed: number = 8;
 
     // TODO this might be helpful
     // kind = EntityTypes.CHAR;
 
     render() {
-        drawCollisionBounds(this.getCollisionBounds());
+        window.renderer.debug(this.getCollisionBounds(), 'darkgreen');
     }
 
     update() {
@@ -33,7 +30,7 @@ export class Char extends Entity {
         // Normal gravity
         const fGravity: Vec2.Vec2 = [0, 1.5];
         // Gravity if the player holds jump (because video games)
-        const fGravityJumping: Vec2.Vec2 = [0, 1.4];
+        const fGravityJumping: Vec2.Vec2 = [0, 1.22];
         this.vel = Vec2.add(this.vel, keysDown[Keys.JUMP] ? fGravityJumping : fGravity);
 
         if (keysDown[Keys.LEFT])

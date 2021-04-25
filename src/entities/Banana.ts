@@ -4,10 +4,7 @@ import { Scene } from '../Scene';
 import { Keys, keysDown } from '../util/keyboard';
 import * as Vec2 from '../Vec2';
 
-import {
-    CollisionBoundry,
-    drawCollisionBounds,
-} from '../CollisionBoundry';
+import { CollisionBoundry } from '../CollisionBoundry';
 
 export class Banana extends Entity {
     scene: Scene | undefined;
@@ -21,7 +18,7 @@ export class Banana extends Entity {
     // kind = EntityTypes.BANANA;
 
     render() {
-        drawCollisionBounds(this.getCollisionBounds());
+        window.renderer.debug(this.getCollisionBounds(), 'darkred');
     }
 
     update() {
@@ -38,7 +35,6 @@ export class Banana extends Entity {
 
         const fJump: Vec2.Vec2 = [0, -20];
         const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
-        console.log(window.frame, window.frame % 120);
         if (grounded && (window.frame % 120 === 0))
             this.vel = Vec2.add(this.vel, fJump);
 
