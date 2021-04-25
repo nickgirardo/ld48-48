@@ -15,6 +15,8 @@ export class Char extends Entity {
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [32, 64];
     vel: Vec2.Vec2 = [0, 0];
+    friction: Vec2.Vec2 =  [0.4, 1];
+    speed: number = 5;
 
     // TODO this might be helpful
     // kind = EntityTypes.Char;
@@ -24,20 +26,36 @@ export class Char extends Entity {
     }
 
     update() {
+        // Normal gravity
+        const fGravity: Vec2.Vec2 = [0, 1.5];
+        // Gravity if the player holds jump (because video games)
+        const fGravityJumping: Vec2.Vec2 = [0, 1.2];
+        const fJump: Vec2.Vec2 = [0, -22];
+
         if (!this.scene)
             return;
 
         const ground = this.scene.ground;
 
-        this.vel = [0, 0];
+        this.vel = Vec2.add(this.vel, keysDown[Keys.JUMP] ? fGravityJumping : fGravity);
 
         if (keysDown[Keys.LEFT])
-            this.vel = Vec2.add(this.vel, [-3, 0]);
+            this.vel = Vec2.add(this.vel, [-this.speed, 0]);
         if (keysDown[Keys.RIGHT])
-            this.vel = Vec2.add(this.vel, [3, 0]);
+            this.vel = Vec2.add(this.vel, [this.speed, 0]);
+
+        // If the character is grounded they can jump
+        const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
+        console.log(grounded);
+        if (grounded && keysDown[Keys.JUMP])
+            this.vel = Vec2.add(this.vel, fJump);
+
+
+        // Friction
+        this.vel = Vec2.vMult(this.vel, this.friction);
 
         // Clamp with x clearances (for ground collision)
-        if(this.vel[0] > 0) {
+        if (this.vel[0] > 0) {
             const posXClearance: number = ground.getPosXClearance(this.getCollisionBounds());
             this.vel[0] = Math.min(posXClearance, this.vel[0]);
         } else {
@@ -46,7 +64,7 @@ export class Char extends Entity {
         }
 
         // Clamp with y clearances (for ground collision)
-        if(this.vel[1] > 0) {
+        if (this.vel[1] > 0) {
             const posYClearance: number = ground.getPosYClearance(this.getCollisionBounds());
             this.vel[1] = Math.min(posYClearance, this.vel[1]);
         } else {

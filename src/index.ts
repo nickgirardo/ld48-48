@@ -25,7 +25,7 @@ const scene = new Scene(ground);
 
 const char = new Char();
 
-char.pos = [250, 250];
+char.pos = [350, 250];
 
 scene.addEntity(char);
 

@@ -12,7 +12,7 @@ const map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1],
     [1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1],
     [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
@@ -44,7 +44,7 @@ export class Ground {
         const leftTile = Math.floor(body[0][0] / tilesize);
         const rightTile = Math.ceil(body[1][0] / tilesize);
 
-        return leftTile - rightTile;
+        return rightTile - leftTile;
     }
 
     // The following functions are terrible janky but idgaf
@@ -96,15 +96,51 @@ export class Ground {
         return clearance;
     }
 
-    // TODO will get to this next
     getPosYClearance(body: CollisionBoundry): number {
+        // Determines how many rows of tiles we will check
         const tilesWide = this.getTilesWide(body);
-        return 0;
+        // Determines from which column we will start checking
+        const leftTile = Math.floor(body[0][0]/tilesize);
+
+        const bottommostPoint = body[1][1];
+        // Start the search for tiles right after the body's bottommost point
+        const topStart = Math.ceil(bottommostPoint/tilesize);
+
+        let clearance = Infinity;
+        for (let i = leftTile; i < tilesWide + leftTile; i++) {
+            for (let j = topStart; j < this.map.length; j++) {
+                if (map[j][i]) {
+                    const currClearance = (j*tilesize) - bottommostPoint;
+                    clearance = Math.min(clearance, currClearance);
+                    break;
+                }
+            }
+        }
+
+        return clearance;
     }
 
-    // TODO will get to this next
     getNegYClearance(body: CollisionBoundry): number {
+        // Determines how many rows of tiles we will check
         const tilesWide = this.getTilesWide(body);
-        return 0;
+        // Determines from which column we will start checking
+        const leftTile = Math.floor(body[0][0]/tilesize);
+
+        const topmostPoint = body[0][1];
+        // Start the search for tiles right after the body's topmost point
+        const bottomStart = Math.ceil(topmostPoint/tilesize);
+
+        let clearance = -Infinity;
+        for (let i = leftTile; i < tilesWide + leftTile; i++) {
+            for (let j = bottomStart; j >= 0; j--) {
+                if (map[j][i]) {
+                    const currClearance = ((j+1)*tilesize) - topmostPoint;
+                    clearance = Math.max(clearance, currClearance);
+                    break;
+                }
+            }
+        }
+
+        return clearance;
     }
 }
