@@ -1,4 +1,4 @@
-import { Entity } from '../Entity';
+import { Entity, EntityTypes } from '../Entity';
 
 import { Scene } from '../Scene';
 import { Keys, keysDown } from '../util/keyboard';
@@ -6,16 +6,16 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry } from '../CollisionBoundry';
 
-export class Banana extends Entity {
+export class Banana implements Entity {
     scene: Scene | undefined;
     pos: Vec2.Vec2 = [0, 0];
-    size: Vec2.Vec2 = [32, 64];
+    size: Vec2.Vec2 = [48, 92];
     vel: Vec2.Vec2 = [0, 0];
     friction: Vec2.Vec2 =  [0.3, 1];
     speed: number = 8;
 
     // TODO this might be helpful
-    // kind = EntityTypes.BANANA;
+    kind = EntityTypes.BANANA;
 
     render() {
         window.renderer.debug(this.getCollisionBounds(), 'darkred');
