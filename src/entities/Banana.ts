@@ -6,6 +6,15 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry } from '../CollisionBoundry';
 
+enum BananaAnim {
+    IDLE,
+    ANTICIPATION,
+    JUMPING,
+    FALLING,
+    HURT,
+    DEAD,
+}
+
 export class Banana implements Entity {
     scene: Scene | undefined;
     pos: Vec2.Vec2 = [0, 0];
@@ -13,6 +22,12 @@ export class Banana implements Entity {
     vel: Vec2.Vec2 = [0, 0];
     friction: Vec2.Vec2 =  [0.3, 1];
     speed: number = 8;
+
+    lastJump: 'left' | 'right' = 'left';
+    lastJumpFrame: number = 0;
+    lastGroundedFrame: number = -1;
+
+    animState: BananaAnim = BananaAnim.IDLE;
 
     // TODO this might be helpful
     kind = EntityTypes.BANANA;
@@ -33,10 +48,39 @@ export class Banana implements Entity {
         const fGravity: Vec2.Vec2 = [0, 1.5];
         this.vel = Vec2.add(this.vel, fGravity);
 
-        const fJump: Vec2.Vec2 = [0, -20];
+        const fJump: Vec2.Vec2 = [0, -25];
         const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
-        if (grounded && (window.frame % 120 === 0))
-            this.vel = Vec2.add(this.vel, fJump);
+
+        if (grounded) {
+            // The banana has just landed
+            if (this.lastGroundedFrame < this.lastJumpFrame) {
+                this.animState = BananaAnim.IDLE;
+                this.lastGroundedFrame = window.frame;
+                this.lastJump = this.lastJump === 'left' ? 'right' : 'left';
+            }
+
+            // About to jump, anticipation here
+            if (window.frame - this.lastGroundedFrame > 30)
+                this.animState = BananaAnim.ANTICIPATION;
+
+            // Jump here
+            if (window.frame - this.lastGroundedFrame > 45) {
+                this.animState = BananaAnim.JUMPING;
+                this.lastJumpFrame = window.frame;
+                this.vel = Vec2.add(this.vel, fJump);
+            }
+        } else {
+            // The banana is not grounded
+            if (this.lastJump === 'left') {
+                this.vel = Vec2.add(this.vel, [this.speed, 0]);
+            } else {
+                this.vel = Vec2.add(this.vel, [-this.speed, 0]);
+            }
+            
+            // Check if we need to set the anim state to falling
+            if (this.vel[1] > 0)
+                this.animState = BananaAnim.FALLING;
+        }
 
 
         // Friction
