@@ -24,21 +24,36 @@ export class Char extends Entity {
     }
 
     update() {
-        // ground = this.scene.ground;
-        // const posXClearance: number = ground.getPosXClearance(this);
-        const posXClearance: number = 0;
-        const negXClearance: number = 0;
-        const posYClearance: number = 0;
-        const negYClearance: number = 0;
+        if (!this.scene)
+            return;
+
+        const ground = this.scene.ground;
 
         this.vel = [0, 0];
 
         if (keysDown[Keys.LEFT])
-            this.vel = Vec2.add(this.vel, [-1, 0]);
+            this.vel = Vec2.add(this.vel, [-3, 0]);
         if (keysDown[Keys.RIGHT])
-            this.vel = Vec2.add(this.vel, [1, 0]);
+            this.vel = Vec2.add(this.vel, [3, 0]);
 
-        // TODO please note the clearances here
+        // Clamp with x clearances (for ground collision)
+        if(this.vel[0] > 0) {
+            const posXClearance: number = ground.getPosXClearance(this.getCollisionBounds());
+            this.vel[0] = Math.min(posXClearance, this.vel[0]);
+        } else {
+            const negXClearance: number = ground.getNegXClearance(this.getCollisionBounds());
+            this.vel[0] = Math.max(negXClearance, this.vel[0]);
+        }
+
+        // Clamp with y clearances (for ground collision)
+        if(this.vel[1] > 0) {
+            const posYClearance: number = ground.getPosYClearance(this.getCollisionBounds());
+            this.vel[1] = Math.min(posYClearance, this.vel[1]);
+        } else {
+            const negYClearance: number = ground.getNegYClearance(this.getCollisionBounds());
+            this.vel[1] = Math.max(negYClearance, this.vel[1]);
+        }
+
         this.pos = Vec2.add(this.pos, this.vel);
     }
 

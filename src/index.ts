@@ -1,5 +1,6 @@
 import { init } from './util/keyboard';
 import { Scene } from './Scene';
+import { Ground } from './Ground';
 import { Char } from './entities/Char';
 
 // NOTE asserting these are not null
@@ -15,14 +16,16 @@ window.ctx = ctx;
 // Set up keyboard listeners
 init();
 
+const ground = new Ground();
+
 // NOTE bellow is just testing some basic scene shit
 // TODO remove
-const scene = new Scene();
+const scene = new Scene(ground);
 // scene.ground = Ground();
 
 const char = new Char();
 
-char.pos = [50, 50];
+char.pos = [250, 250];
 
 scene.addEntity(char);
 

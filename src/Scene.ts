@@ -1,15 +1,11 @@
 import { Entity } from './Entity';
 import { Ground } from './Ground';
 
-type SceneType = {
-    ground: Ground;
-    entities: Entity[];
-    addEntity: (entity: Entity) => void;
-    removeEntity: (entity: Entity) => void;
-    update: () => void;
-};
+export class Scene {
+    constructor(ground: Ground) {
+        this.ground = ground;
+    }
 
-export class Scene<SceneType> {
     // TODO
     ground: Ground;
     entities: Entity[] = [];
@@ -28,7 +24,7 @@ export class Scene<SceneType> {
         this.entities.splice(pos, 1);
     };
     update = () => {
-        console.log(this.entities);
+        this.ground.render();
         this.entities.forEach(e => e.update());
         this.entities.forEach(e => e.render());
     };
