@@ -9,7 +9,7 @@ import {
     drawCollisionBounds,
 } from '../CollisionBoundry';
 
-export class Char extends Entity {
+export class Banana extends Entity {
     scene: Scene | undefined;
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [32, 64];
@@ -18,35 +18,25 @@ export class Char extends Entity {
     speed: number = 8;
 
     // TODO this might be helpful
-    // kind = EntityTypes.CHAR;
+    // kind = EntityTypes.BANANA;
 
     render() {
         drawCollisionBounds(this.getCollisionBounds());
     }
 
     update() {
+        const fJump: Vec2.Vec2 = [0, -20];
+
         if (!this.scene)
             return;
 
         const ground = this.scene.ground;
 
-        // Normal gravity
+        // Gravity
+        // TODO should this be stored somewhere so we don't accidentally give
+        // different entities different gravities?
         const fGravity: Vec2.Vec2 = [0, 1.5];
-        // Gravity if the player holds jump (because video games)
-        const fGravityJumping: Vec2.Vec2 = [0, 1.4];
-        this.vel = Vec2.add(this.vel, keysDown[Keys.JUMP] ? fGravityJumping : fGravity);
-
-        if (keysDown[Keys.LEFT])
-            this.vel = Vec2.add(this.vel, [-this.speed, 0]);
-        if (keysDown[Keys.RIGHT])
-            this.vel = Vec2.add(this.vel, [this.speed, 0]);
-
-        // If the character is grounded they can jump
-        const fJump: Vec2.Vec2 = [0, -20];
-        const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
-        if (grounded && keysDown[Keys.JUMP])
-            this.vel = Vec2.add(this.vel, fJump);
-
+        this.vel = Vec2.add(this.vel, fGravity);
 
         // Friction
         this.vel = Vec2.vMult(this.vel, this.friction);

@@ -2,6 +2,7 @@ import { init } from './util/keyboard';
 import { Scene } from './Scene';
 import { Ground } from './Ground';
 import { Char } from './entities/Char';
+import { Banana } from './entities/Banana';
 
 // NOTE asserting these are not null
 // This is somewhat fine as if these are infact null than
@@ -19,15 +20,17 @@ init();
 const ground = new Ground();
 
 // NOTE bellow is just testing some basic scene shit
-// TODO remove
 const scene = new Scene(ground);
-// scene.ground = Ground();
 
 const char = new Char();
-
 char.pos = [350, 250];
 
 scene.addEntity(char);
+
+const banana = new Banana();
+banana.pos = [550, 150];
+
+scene.addEntity(banana);
 
 // TODO resize to 16x9 (or 4x3 or something)
 // TODO resize on init and window resize event
