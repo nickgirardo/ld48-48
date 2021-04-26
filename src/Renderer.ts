@@ -53,9 +53,23 @@ export default class Renderer {
         );
     }
 
-    // TODO type img
-    drawImagePart(img: any, pos: Vec2.Vec2, logicalOrigin: Vec2.Vec2, visualOrigin: Vec2.Vec2, size: Vec2.Vec2) {
+    drawImagePart(img: ImageBitmap, sheetPos: Vec2.Vec2, sheetSize: Vec2.Vec2, destPos: Vec2.Vec2, destSize: Vec2.Vec2) {
+        const scaleFactor = this.scale / 92;
 
+        const scaledPos = Vec2.sMult(scaleFactor, destPos);
+        const scaledSize = Vec2.sMult(scaleFactor, destSize);
+
+        this.ctx.drawImage(
+            img,
+            sheetPos[0],
+            sheetPos[1],
+            sheetSize[0],
+            sheetSize[1],
+            Math.floor(scaledPos[0]),
+            Math.floor(scaledPos[1]),
+            Math.floor(scaledSize[0]),
+            Math.floor(scaledSize[1]),
+        );
     }
 }
 

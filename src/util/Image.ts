@@ -1,7 +1,7 @@
 // @ts-ignore
-import bananaSheet from  '../sprites/tomato_sheet.png';
+import bananaSheet from  '../sprites/banana_sheet.png';
 // @ts-ignore
-import tomatoSheet from  '../sprites/banana_sheet.png';
+import tomatoSheet from  '../sprites/tomato_sheet.png';
 // @ts-ignore
 import vommitSprite from  '../sprites/vommit.png';
 // @ts-ignore

@@ -1,5 +1,7 @@
 import { Entity, EntityTypes } from '../Entity';
 
+import { Images } from '../util/Image';
+
 import { Scene } from '../Scene';
 import { Vommit } from './Vommit';
 import { Keys, keysDown } from '../util/keyboard';
@@ -51,6 +53,18 @@ export class Tomato implements Entity {
     render() {
         let color = this.invincibility ? 'pink' : 'darkred';
         window.renderer.debug(this.getCollisionBounds(), color);
+
+        const posOffset: Vec2.Vec2 = [0, 20];
+        const frameSize: Vec2.Vec2 = [64, 84];
+
+        window.renderer.drawImagePart(
+            window.images[Images.TOMATO_SHEET],
+            [0, 0],
+            [68, 82],
+            Vec2.sub(this.pos, posOffset),
+            frameSize,
+        );
+
     }
 
     update() {
