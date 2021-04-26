@@ -5,6 +5,7 @@ import { Keys, keysDown } from '../util/keyboard';
 import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry } from '../CollisionBoundry';
+import { Images } from '../util/Image';
 
 enum Facing {
     LEFT,
@@ -19,7 +20,7 @@ export class Nail implements Entity {
     alive: boolean = true;
 
     pos: Vec2.Vec2 = [0, 0];
-    size: Vec2.Vec2 = [64, 32];
+    size: Vec2.Vec2 = [48, 24];
     vel: Vec2.Vec2 = [0, 0];
     speed: number = 8;
 
@@ -28,7 +29,11 @@ export class Nail implements Entity {
     facing: Facing = Facing.LEFT;
 
     render() {
-        window.renderer.debug(this.getCollisionBounds(), 'green');
+        const img = this.facing === Facing.LEFT ?
+            window.images[Images.NAIL_LEFT] : 
+            window.images[Images.NAIL_RIGHT];
+
+        window.renderer.drawImage(img, this.pos, this.size);
     }
 
     update() {

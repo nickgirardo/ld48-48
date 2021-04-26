@@ -11,9 +11,13 @@ import vommitSpriteLeft from '../sprites/vommit_left.png';
 // @ts-ignore
 import vommitSpriteRight from '../sprites/vommit_right.png';
 // @ts-ignore
-import nailSprite from '../sprites/nail.png';
+import nailPickupSprite from '../sprites/nail_pickup.png';
 // @ts-ignore
-import appleSprite from '../sprites/apple.png';
+import applePickupSprite from '../sprites/apple_pickup.png';
+// @ts-ignore
+import nailLeftSprite from '../sprites/nail_projectile_left.png';
+// @ts-ignore
+import nailRightSprite from '../sprites/nail_projectile_right.png';
 
 // TODO should src be a string? Is there a more specific type?
 const loadImage = (src: string): Promise<ImageBitmap> => 
@@ -42,8 +46,12 @@ export enum Images {
 
     VOMMIT_LEFT,
     VOMMIT_RIGHT,
-    NAIL,
-    APPLE,
+
+    NAIL_PICKUP,
+    APPLE_PICKUP,
+
+    NAIL_LEFT,
+    NAIL_RIGHT,
 };
 
 export async function loadImages () {
@@ -54,10 +62,13 @@ export async function loadImages () {
 
     const vommitLeft = await loadImage(vommitSpriteLeft);
     const vommitRight = await loadImage(vommitSpriteRight);
-    const nail = await loadImage(nailSprite);
-    const apple = await loadImage(appleSprite);
 
-    // TODO
+    const nailPickup = await loadImage(nailPickupSprite);
+    const applePickup = await loadImage(applePickupSprite);
+
+    const nailLeft = await loadImage(nailLeftSprite);
+    const nailRight = await loadImage(nailRightSprite);
+
     window.images = {
         // TODO
         [Images.CHAR_SHEET]: tomato,
@@ -66,9 +77,14 @@ export async function loadImages () {
         [Images.TOMATO_SHEET_FLIP]: tomatoFlip,
         [Images.BANANA_SHEET]: banana,
         [Images.BANANA_SHEET_FLIP]: bananaFlip,
+
         [Images.VOMMIT_LEFT]: vommitLeft,
         [Images.VOMMIT_RIGHT]: vommitRight,
-        [Images.NAIL]: nail,
-        [Images.APPLE]: apple,
+
+        [Images.NAIL_PICKUP]: nailPickup,
+        [Images.APPLE_PICKUP]: applePickup,
+
+        [Images.NAIL_LEFT]: nailLeft,
+        [Images.NAIL_RIGHT]: nailRight,
     };
 }

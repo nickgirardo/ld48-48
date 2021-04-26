@@ -196,6 +196,7 @@ export class Char implements Entity {
 
                         const nail = new Nail();
                         nail.pos = Vec2.clone(this.pos);
+                        nail.facing = this.facing;
                         nail.pos = this.facing === Facing.LEFT ?
                             Vec2.add(nail.pos, [-40, 20]) :
                             Vec2.add(nail.pos, [20, 20]);
