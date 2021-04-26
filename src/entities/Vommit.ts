@@ -7,6 +7,8 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
+import { Images } from '../util/Image';
+
 enum Facing {
     LEFT,
     RIGHT,
@@ -36,7 +38,15 @@ export class Vommit implements Entity {
     }
 
     render() {
-        window.renderer.debug(this.getCollisionBounds(), 'purple');
+        // window.renderer.debug(this.getCollisionBounds(), 'purple');
+
+        // NOTE these are flipped, that's intentional lol
+        // TODO this is broken somehow, it always uses the RIGHT img
+        const img = this.facing === Facing.LEFT ?
+            window.images[Images.VOMMIT_LEFT] : 
+            window.images[Images.VOMMIT_RIGHT];
+
+        window.renderer.drawImage(img, this.pos, this.size);
     }
 
     remove(deflect: boolean = false) {

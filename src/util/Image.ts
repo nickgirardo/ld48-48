@@ -7,7 +7,9 @@ import tomatoSheet from '../sprites/tomato_sheet.png';
 // @ts-ignore
 import tomatoSheetFlip from '../sprites/tomato_sheet_flipped.png';
 // @ts-ignore
-import vommitSprite from '../sprites/vommit.png';
+import vommitSpriteLeft from '../sprites/vommit_left.png';
+// @ts-ignore
+import vommitSpriteRight from '../sprites/vommit_right.png';
 // @ts-ignore
 import nailSprite from '../sprites/nail.png';
 // @ts-ignore
@@ -38,7 +40,8 @@ export enum Images {
     BANANA_SHEET,
     BANANA_SHEET_FLIP,
 
-    VOMMIT,
+    VOMMIT_LEFT,
+    VOMMIT_RIGHT,
     NAIL,
     APPLE,
 };
@@ -48,7 +51,9 @@ export async function loadImages () {
     const bananaFlip = await loadImage(bananaSheetFlip);
     const tomato = await loadImage(tomatoSheet);
     const tomatoFlip = await loadImage(tomatoSheetFlip);
-    const vommit = await loadImage(vommitSprite);
+
+    const vommitLeft = await loadImage(vommitSpriteLeft);
+    const vommitRight = await loadImage(vommitSpriteRight);
     const nail = await loadImage(nailSprite);
     const apple = await loadImage(appleSprite);
 
@@ -61,7 +66,8 @@ export async function loadImages () {
         [Images.TOMATO_SHEET_FLIP]: tomatoFlip,
         [Images.BANANA_SHEET]: banana,
         [Images.BANANA_SHEET_FLIP]: bananaFlip,
-        [Images.VOMMIT]: vommit,
+        [Images.VOMMIT_LEFT]: vommitLeft,
+        [Images.VOMMIT_RIGHT]: vommitRight,
         [Images.NAIL]: nail,
         [Images.APPLE]: apple,
     };

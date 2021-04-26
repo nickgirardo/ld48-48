@@ -53,6 +53,20 @@ export default class Renderer {
         );
     }
 
+    drawImage(img: ImageBitmap, destPos: Vec2.Vec2, destSize: Vec2.Vec2) {
+        const scaleFactor = this.scale / 92;
+
+        const scaledPos = Vec2.sMult(scaleFactor, destPos);
+        const scaledSize = Vec2.sMult(scaleFactor, destSize);
+
+        this.ctx.drawImage(
+            img,
+            Math.floor(scaledPos[0]),
+            Math.floor(scaledPos[1]),
+            Math.floor(scaledSize[0]),
+            Math.floor(scaledSize[1]),
+        );
+    }
     drawImagePart(img: ImageBitmap, sheetPos: Vec2.Vec2, sheetSize: Vec2.Vec2, destPos: Vec2.Vec2, destSize: Vec2.Vec2) {
         const scaleFactor = this.scale / 92;
 

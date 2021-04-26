@@ -85,7 +85,7 @@ export class Tomato implements Entity {
 
             const vommit = new Vommit();
             vommit.pos = Vec2.clone(this.pos);
-            vommit.pos[1] = vommit.pos[1] + 10;
+            vommit.pos[1] = vommit.pos[1] + 20;
 
             vommit.vel = this.facing === Facing.LEFT ? [-vommit.speed, 0] : [vommit.speed, 0];
             vommit.facing = this.facing;
