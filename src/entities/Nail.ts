@@ -15,6 +15,8 @@ export class Nail implements Entity {
     kind = EntityTypes.NAIL;
     scene: Scene | undefined;
 
+    alive: boolean = true;
+
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [64, 32];
     vel: Vec2.Vec2 = [0, 0];

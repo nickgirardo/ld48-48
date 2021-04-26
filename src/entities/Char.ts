@@ -44,6 +44,9 @@ export class Char implements Entity {
     scene: Scene | undefined;
     animState: CharAnim = CharAnim.IDLE;
 
+    alive: boolean = true;
+    health: number = 3;
+
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [48, 92];
     vel: Vec2.Vec2 = [0, 0];
@@ -65,6 +68,8 @@ export class Char implements Entity {
 
     lastAttack: Attacks = Attacks.SHOVEL;
 
+    // How many frames to show the player's corpse before game over
+    deathCounter: number = 150;
 
     render() {
         window.renderer.debug(this.getCollisionBounds(), 'darkgreen');
@@ -88,32 +93,15 @@ export class Char implements Entity {
             if (this.invincibility)
                 return;
 
-            // TODO lose health
-           this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
+            this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
             this.invincibility = 120;
             this.stun = 30;
-        };
 
-        // Check for collisions
-        const a = this.scene.entities
-            .filter(e => e !== this)
-            .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
-            .forEach(e => {
-                switch (e.kind) {
-                    case EntityTypes.CHAR:
-                        return;
-                    case EntityTypes.BANANA:
-                    case EntityTypes.TOMATO:
-                        // TODO lose health
-                        takeHit(e);
-                        return;
-                    case EntityTypes.VOMMIT:
-                        // TODO lose health
-                        takeHit(e);
-                        this.scene!.removeEntity(e);
-                        return;
-                }
-            });
+            this.health--;
+
+            if (this.health <= 0)
+                this.alive = false;
+        };
 
         // Normal gravity
         const fGravity: Vec2.Vec2 = [0, 1.5];
@@ -121,37 +109,61 @@ export class Char implements Entity {
         const fGravityJumping: Vec2.Vec2 = [0, 1.22];
         this.vel = Vec2.add(this.vel, keysDown[Keys.JUMP] ? fGravityJumping : fGravity);
 
-        const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
 
-        if (grounded) {
-            if (this.lastGroundedFrame < this.lastJumpFrame)
-                this.lastGroundedFrame = window.frame;
+        if (this.alive) {
+            // Check for collisions
+            const a = this.scene.entities
+                .filter(e => e !== this)
+                .filter(e => e.alive)
+                .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
+                .forEach(e => {
+                    switch (e.kind) {
+                        case EntityTypes.CHAR:
+                            return;
+                        case EntityTypes.BANANA:
+                        case EntityTypes.TOMATO:
+                            // TODO lose health
+                            takeHit(e);
+                            return;
+                        case EntityTypes.VOMMIT:
+                            // TODO lose health
+                            takeHit(e);
+                            this.scene!.removeEntity(e);
+                            return;
+                    }
+                });
 
-            // This will be set later if the character is running or something
-            this.animState = CharAnim.IDLE;
-        }
+            const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
 
-        if (!grounded) {
-            if (this.lastGroundedFrame > this.lastJumpFrame)
-                this.animState = CharAnim.FALLING;
-        }
+            if (grounded) {
+                if (this.lastGroundedFrame < this.lastJumpFrame)
+                    this.lastGroundedFrame = window.frame;
 
-        // The player can only move or jump if not stunned
-        if (!this.stun) {
-            if (keysDown[Keys.LEFT] && !keysDown[Keys.RIGHT]) {
-                this.vel = Vec2.add(this.vel, [-this.speed, 0]);
-                if (grounded) {
-                    this.animState = CharAnim.RUNNING;
-                    this.facing = Facing.LEFT;
-                }
+                // This will be set later if the character is running or something
+                this.animState = CharAnim.IDLE;
             }
-            if (keysDown[Keys.RIGHT] && !keysDown[Keys.LEFT]) {
-                this.vel = Vec2.add(this.vel, [this.speed, 0]);
-                if (grounded) {
-                    this.animState = CharAnim.RUNNING;
-                    this.facing = Facing.RIGHT;
-                }
+
+            if (!grounded) {
+                if (this.lastGroundedFrame > this.lastJumpFrame)
+                    this.animState = CharAnim.FALLING;
             }
+
+            // The player can only move or jump if not stunned
+            if (!this.stun) {
+                if (keysDown[Keys.LEFT] && !keysDown[Keys.RIGHT]) {
+                    this.vel = Vec2.add(this.vel, [-this.speed, 0]);
+                    if (grounded) {
+                        this.animState = CharAnim.RUNNING;
+                        this.facing = Facing.LEFT;
+                    }
+                }
+                if (keysDown[Keys.RIGHT] && !keysDown[Keys.LEFT]) {
+                    this.vel = Vec2.add(this.vel, [this.speed, 0]);
+                    if (grounded) {
+                        this.animState = CharAnim.RUNNING;
+                        this.facing = Facing.RIGHT;
+                    }
+                }
 
             // If the character is grounded they can jump
             const fJump: number = -20;
@@ -162,40 +174,50 @@ export class Char implements Entity {
                 jumpSound.getAudio().play();
             }
 
-            // Player not in attacking delay
-            // TODO queue attacks? Almost definitely not lul
-            if (this.lastAttackFrame + fireDelay[this.lastAttack] < window.frame) {
-                if (keysDown[Keys.SWING]) {
-                    this.lastAttack = Attacks.SHOVEL;
-                    this.lastAttackFrame = window.frame;
+                // Player not in attacking delay
+                // TODO queue attacks? Almost definitely not lul
+                if (this.lastAttackFrame + fireDelay[this.lastAttack] < window.frame) {
+                    if (keysDown[Keys.SWING]) {
+                        this.lastAttack = Attacks.SHOVEL;
+                        this.lastAttackFrame = window.frame;
 
-                    const shovel = new Shovel(this);
-                    shovel.offset = this.facing === Facing.LEFT ?
-                        [-60, 30] :
-                        [40, 30];
-                    this.scene.addEntity(shovel);
-                } else if (keysDown[Keys.FIRE]) {
-                    // TODO check if player has nails
-                    this.lastAttack = Attacks.SLING_SHOT;
-                    this.lastAttackFrame = window.frame;
+                        const shovel = new Shovel(this);
+                        shovel.offset = this.facing === Facing.LEFT ?
+                            [-60, 30] :
+                            [40, 30];
+                        this.scene.addEntity(shovel);
+                    } else if (keysDown[Keys.FIRE]) {
+                        // TODO check if player has nails
+                        this.lastAttack = Attacks.SLING_SHOT;
+                        this.lastAttackFrame = window.frame;
 
-                    const nail = new Nail();
-                    nail.pos = Vec2.clone(this.pos);
-                    nail.pos = this.facing === Facing.LEFT ?
-                        Vec2.add(nail.pos, [-40, 20]) :
-                        Vec2.add(nail.pos, [20, 20]);
-                    nail.vel = this.facing === Facing.LEFT ?
-                        [-nail.speed, 0] :
-                        [nail.speed, 0];
-                    this.scene.addEntity(nail);
+                        const nail = new Nail();
+                        nail.pos = Vec2.clone(this.pos);
+                        nail.pos = this.facing === Facing.LEFT ?
+                            Vec2.add(nail.pos, [-40, 20]) :
+                            Vec2.add(nail.pos, [20, 20]);
+                        nail.vel = this.facing === Facing.LEFT ?
+                            [-nail.speed, 0] :
+                            [nail.speed, 0];
+                        this.scene.addEntity(nail);
+                    }
                 }
+
+                // TODO Set attack animation
             }
 
-            // TODO Set attack animation
-        }
+            if (this.stun) {
+                this.animState = CharAnim.HURT;
+            }
+        } else {
+            // The player is dead :(
+            this.animState = CharAnim.DEAD;
+            this.deathCounter--;
 
-        if (this.stun) {
-            this.animState = CharAnim.HURT;
+            if (!this.deathCounter) {
+                console.log('game over :(');
+                this.scene.removeEntity(this);
+            }
         }
 
         // Friction

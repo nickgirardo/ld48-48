@@ -25,6 +25,9 @@ export class Tomato implements Entity {
     kind = EntityTypes.TOMATO;
     scene: Scene | undefined;
 
+    health: number = 5;
+    alive: boolean = true;
+
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [64, 64];
     vel: Vec2.Vec2 = [0, 0];
@@ -41,6 +44,9 @@ export class Tomato implements Entity {
 
     frameStunned: number = 0;
     invincibility: number = 0;
+
+    // How many frames the enemies corpse will hang around for after death
+    despawnCounter: number = 120;
 
     render() {
         let color = this.invincibility ? 'pink' : 'darkred';
@@ -64,44 +70,12 @@ export class Tomato implements Entity {
             this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
             this.invincibility = 60;
             this.frameStunned = window.frame;
+
+            this.health -= damage;
+            if (this.health <= 0) {
+                this.alive = false;
+            }
         };
-
-        // Check for collisions
-        // Only interested in collisions with player's attacks (nail, shovel)
-        const a = this.scene.entities
-            .filter(e => [EntityTypes.NAIL, EntityTypes.SHOVEL].includes(e.kind))
-            .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
-            .forEach(e => {
-                switch (e.kind) {
-                    case EntityTypes.NAIL:
-                        takeHit(e, 1);
-                        this.scene!.removeEntity(e);
-                        return;
-                    case EntityTypes.SHOVEL:
-                        takeHit(e, 2);
-                        return;
-                }
-            });
-
-        if (this.invincibility)
-            this.invincibility--;
-
-        if (char) {
-            if (char.pos[0] > this.pos[0])
-                this.facing = Facing.RIGHT;
-            else
-                this.facing = Facing.LEFT;
-
-            const diff = Vec2.sub(char.pos, this.pos);
-
-            const isInRange = Math.abs(diff[0]) < 240 && diff[1] < 120 && diff[1] > -200;
-
-            // Are we just now entering the range?
-            if (!this.inRange && isInRange)
-                this.frameEnteredRange = window.frame;
-
-            this.inRange = isInRange;
-        }
 
         const fire = () => {
             // This should never happen
@@ -118,14 +92,63 @@ export class Tomato implements Entity {
             this.scene.addEntity(vommit);
         }
 
-        // Fire a shot if in range for at least 30 frames
-        if (
-            this.inRange &&
-            this.frameEnteredRange + 30 < window.frame &&
-            this.frameLastFire + 75 < window.frame &&
-            this.frameStunned + 100 < window.frame
-        )
-            fire();
+
+        if (this.alive) {
+            // Check for collisions
+            // Only interested in collisions with player's attacks (nail, shovel)
+            const a = this.scene.entities
+                .filter(e => [EntityTypes.NAIL, EntityTypes.SHOVEL].includes(e.kind))
+                .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
+                .forEach(e => {
+                    switch (e.kind) {
+                        case EntityTypes.NAIL:
+                            takeHit(e, 1);
+                            this.scene!.removeEntity(e);
+                            return;
+                        case EntityTypes.SHOVEL:
+                            takeHit(e, 2);
+                            return;
+                    }
+                });
+
+            if (this.invincibility)
+                this.invincibility--;
+
+            if (char) {
+                if (char.pos[0] > this.pos[0])
+                    this.facing = Facing.RIGHT;
+                else
+                    this.facing = Facing.LEFT;
+
+                const diff = Vec2.sub(char.pos, this.pos);
+
+                const isInRange = Math.abs(diff[0]) < 240 && diff[1] < 120 && diff[1] > -200;
+
+                // Are we just now entering the range?
+                if (!this.inRange && isInRange)
+                    this.frameEnteredRange = window.frame;
+
+                this.inRange = isInRange;
+            }
+            // Fire a shot if in range for at least 30 frames
+            if (
+                char &&
+                char.alive &&
+                this.inRange &&
+                this.frameEnteredRange + 30 < window.frame &&
+                this.frameLastFire + 75 < window.frame &&
+                this.frameStunned + 100 < window.frame
+            )
+                fire();
+
+        } else {
+            // The tomato is dead :)
+            this.animState = TomatoAnim.DEAD;
+            this.despawnCounter--;
+
+            if (!this.despawnCounter)
+                this.scene.removeEntity(this);
+        }
 
 
         // Gravity
