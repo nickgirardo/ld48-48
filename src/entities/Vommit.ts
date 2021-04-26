@@ -38,8 +38,6 @@ export class Vommit implements Entity {
     }
 
     render() {
-        // window.renderer.debug(this.getCollisionBounds(), 'purple');
-
         // NOTE these are flipped, that's intentional lol
         // TODO this is broken somehow, it always uses the RIGHT img
         const img = this.facing === Facing.LEFT ?
