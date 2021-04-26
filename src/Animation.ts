@@ -1,6 +1,7 @@
 import * as Vec2 from './Vec2';
 import { Images } from './util/Image';
 
+import { Banana } from './entities/Banana';
 import { Tomato } from './entities/Tomato';
 
 export enum Anims {
@@ -14,6 +15,16 @@ export enum TomatoAnim {
     HURT,
     DEAD,
 }
+
+export enum BananaAnim {
+    IDLE,
+    ANTICIPATION,
+    JUMPING,
+    // FALLING,
+    HURT,
+    DEAD,
+}
+
 
 export const AnimateTomato = (tomato: Tomato) => {
     const sheet = tomato.facing === 'left' ?
@@ -91,6 +102,85 @@ export const AnimateTomato = (tomato: Tomato) => {
                 [68, 165],
                 [72, 90],
                 Vec2.sub(tomato.pos, posOffset),
+                frameSize,
+            );
+
+            return;
+        }
+    }
+};
+
+export const AnimateBanana = (banana: Banana) => {
+    const sheet = banana.lastJump === 'right' ?
+        window.images[Images.BANANA_SHEET] :
+        window.images[Images.BANANA_SHEET_FLIP];
+
+    switch (banana.animState) {
+        case BananaAnim.IDLE: {
+            const posOffset: Vec2.Vec2 = [0, 0];
+            const frameSize: Vec2.Vec2 = [48, 70];
+
+            window.renderer.drawImagePart(
+                sheet,
+                [0, 0],
+                [48, 70],
+                Vec2.sub(banana.pos, posOffset),
+                frameSize,
+            );
+
+            return;
+        }
+        case BananaAnim.ANTICIPATION: {
+            const posOffset: Vec2.Vec2 = [0, 0];
+            const frameSize: Vec2.Vec2 = [48, 70];
+
+            window.renderer.drawImagePart(
+                sheet,
+                [50, 0],
+                [48, 70],
+                Vec2.sub(banana.pos, posOffset),
+                frameSize,
+            );
+
+            return;
+        }
+        case BananaAnim.JUMPING: {
+            const posOffset: Vec2.Vec2 = [10, 0];
+            const frameSize: Vec2.Vec2 = [70, 70];
+
+            window.renderer.drawImagePart(
+                sheet,
+                [96, 0],
+                [70, 70],
+                Vec2.sub(banana.pos, posOffset),
+                frameSize,
+            );
+
+            return;
+        }
+        case BananaAnim.HURT: {
+            const posOffset: Vec2.Vec2 = [10, -5];
+            const frameSize: Vec2.Vec2 = [72, 70];
+
+            window.renderer.drawImagePart(
+                sheet,
+                [4, 83],
+                [68, 70],
+                Vec2.sub(banana.pos, posOffset),
+                frameSize,
+            );
+
+            return;
+        }
+        case BananaAnim.DEAD: {
+            const posOffset: Vec2.Vec2 = [15, -25];
+            const frameSize: Vec2.Vec2 = [74, 45];
+
+            window.renderer.drawImagePart(
+                sheet,
+                [71, 83],
+                [74, 45],
+                Vec2.sub(banana.pos, posOffset),
                 frameSize,
             );
 

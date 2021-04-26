@@ -37,7 +37,7 @@ const startGame = () => {
     scene.addEntity(banana);
 
     const tomato = new Tomato();
-    tomato.pos = [450, 150];
+    tomato.pos = [1000, 150];
     scene.addEntity(tomato);
 
     const tick = () => {

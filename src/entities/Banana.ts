@@ -6,18 +6,11 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
-enum BananaAnim {
-    IDLE,
-    ANTICIPATION,
-    JUMPING,
-    FALLING,
-    HURT,
-    DEAD,
-}
+import { AnimateBanana, BananaAnim } from '../Animation';
 
 enum Facing {
-    LEFT,
-    RIGHT,
+    LEFT = 'left',
+    RIGHT = 'right',
 }
 
 export class Banana implements Entity {
@@ -26,7 +19,7 @@ export class Banana implements Entity {
     index: number = 0;
 
     pos: Vec2.Vec2 = [0, 0];
-    size: Vec2.Vec2 = [48, 92];
+    size: Vec2.Vec2 = [48, 70];
     vel: Vec2.Vec2 = [0, 0];
     friction: Vec2.Vec2 =  [0.3, 1];
     speed: number = 8;
@@ -34,6 +27,7 @@ export class Banana implements Entity {
     alive: boolean = true;
     health: number = 5;
 
+    facing: Facing = Facing.LEFT;
     lastJump: Facing = Facing.LEFT;
     lastJumpFrame: number = 0;
     lastGroundedFrame: number = -1;
@@ -41,13 +35,13 @@ export class Banana implements Entity {
     animState: BananaAnim = BananaAnim.IDLE;
 
     invincibility: number = 0;
-    frameStunned: number = 0;
+    frameStunned: number = -100;
 
     // How long an enemy's corpse will remain after death
-    despawnCounter: number = 120;
+    despawnCounter: number = 180;
 
     render() {
-        window.renderer.debug(this.getCollisionBounds(), 'darkred');
+        AnimateBanana(this);
     }
 
     update() {
@@ -100,6 +94,9 @@ export class Banana implements Entity {
             if (this.invincibility)
                 this.invincibility--;
 
+            if (window.frame - this.frameStunned < 60)
+                this.animState = BananaAnim.HURT;
+
             if (grounded) {
                 // The banana has just landed
                 if (this.lastGroundedFrame < this.lastJumpFrame) {
@@ -116,6 +113,7 @@ export class Banana implements Entity {
 
                 // Jump here
                 if (window.frame - this.lastGroundedFrame > 45 && window.frame - this.frameStunned > 120) {
+                    this.facing = this.lastJump;
                     this.animState = BananaAnim.JUMPING;
                     this.lastJumpFrame = window.frame;
                     this.vel = Vec2.add(this.vel, fJump);
@@ -129,8 +127,10 @@ export class Banana implements Entity {
                 }
 
                 // Check if we need to set the anim state to falling
+                /*
                 if (this.vel[1] > 0)
                     this.animState = BananaAnim.FALLING;
+                */
             }
         } else {
             this.animState = BananaAnim.DEAD;
