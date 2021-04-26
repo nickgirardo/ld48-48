@@ -5,7 +5,7 @@ import { Vommit } from './Vommit';
 import { Keys, keysDown } from '../util/keyboard';
 import * as Vec2 from '../Vec2';
 
-import { CollisionBoundry } from '../CollisionBoundry';
+import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
 enum TomatoAnim {
     IDLE,
@@ -39,8 +39,12 @@ export class Tomato implements Entity {
     facing: Facing = Facing.LEFT;
     inRange: boolean = false;
 
+    frameStunned: number = 0;
+    invincibility: number = 0;
+
     render() {
-        window.renderer.debug(this.getCollisionBounds(), 'darkred');
+        let color = this.invincibility ? 'pink' : 'darkred';
+        window.renderer.debug(this.getCollisionBounds(), color);
     }
 
     update() {
@@ -50,6 +54,37 @@ export class Tomato implements Entity {
         const ground = this.scene.ground;
 
         const char = this.scene.entities.find(e => e.kind === EntityTypes.CHAR);
+
+        const takeHit = (e: Entity, damage: number) => {
+            // If the player has recently taken a hit, ignore this
+            if (this.invincibility)
+                return;
+
+            // TODO lose health
+            this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
+            this.invincibility = 60;
+            this.frameStunned = window.frame;
+        };
+
+        // Check for collisions
+        // Only interested in collisions with player's attacks (nail, shovel)
+        const a = this.scene.entities
+            .filter(e => [EntityTypes.NAIL, EntityTypes.SHOVEL].includes(e.kind))
+            .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
+            .forEach(e => {
+                switch (e.kind) {
+                    case EntityTypes.NAIL:
+                        takeHit(e, 1);
+                        this.scene!.removeEntity(e);
+                        return;
+                    case EntityTypes.SHOVEL:
+                        takeHit(e, 2);
+                        return;
+                }
+            });
+
+        if (this.invincibility)
+            this.invincibility--;
 
         if (char) {
             if (char.pos[0] > this.pos[0])
@@ -87,7 +122,8 @@ export class Tomato implements Entity {
         if (
             this.inRange &&
             this.frameEnteredRange + 30 < window.frame &&
-            this.frameLastFire + 75 < window.frame
+            this.frameLastFire + 75 < window.frame &&
+            this.frameStunned + 100 < window.frame
         )
             fire();
 
