@@ -18,7 +18,7 @@ export class Shovel implements Entity {
 
     char: Char;
 
-    lifetime: number = 30;
+    lifetime: number = 20;
 
     constructor(char: Char) {
         this.char = char;

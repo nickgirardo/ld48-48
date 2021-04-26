@@ -33,7 +33,7 @@ enum Attacks {
 };
 
 const fireDelay: {[a in Attacks]: number } = {
-    [Attacks.SHOVEL]: 30,
+    [Attacks.SHOVEL]: 40,
     [Attacks.SLING_SHOT]: 30,
     [Attacks.NAIL_GUN]: 15,
 };

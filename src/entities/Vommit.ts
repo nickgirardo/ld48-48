@@ -4,7 +4,7 @@ import { Scene } from '../Scene';
 import { Keys, keysDown } from '../util/keyboard';
 import * as Vec2 from '../Vec2';
 
-import { CollisionBoundry } from '../CollisionBoundry';
+import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
 enum Facing {
     LEFT,
@@ -33,6 +33,20 @@ export class Vommit implements Entity {
             return;
 
         const ground = this.scene.ground;
+
+        // Check for collisions
+        // Only interested in shovel, which destroys this
+        const a = this.scene.entities
+            .filter(e => e.kind === EntityTypes.SHOVEL)
+            .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
+            .forEach(e => {
+                switch (e.kind) {
+                    case EntityTypes.SHOVEL:
+                        this.scene!.removeEntity(this);
+                        return;
+                }
+            });
+
 
         this.lifetime--;
         if (!this.lifetime)
