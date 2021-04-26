@@ -88,6 +88,7 @@ export class Tomato implements Entity {
             vommit.pos[1] = vommit.pos[1] + 10;
 
             vommit.vel = this.facing === Facing.LEFT ? [-vommit.speed, 0] : [vommit.speed, 0];
+            vommit.facing = this.facing;
             this.scene.addEntity(vommit);
         }
 
