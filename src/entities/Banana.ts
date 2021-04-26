@@ -23,6 +23,8 @@ enum Facing {
 export class Banana implements Entity {
     kind = EntityTypes.BANANA;
     scene: Scene | undefined;
+    index: number = 0;
+
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [48, 92];
     vel: Vec2.Vec2 = [0, 0];

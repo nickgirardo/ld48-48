@@ -9,14 +9,7 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
-enum TomatoAnim {
-    IDLE,
-    // IN_RANGE?
-    ANTICIPATION,
-    SPITTING,
-    HURT,
-    DEAD,
-}
+import { AnimateTomato, Anims, TomatoAnim } from '../Animation';
 
 enum Facing {
     LEFT,
@@ -26,6 +19,7 @@ enum Facing {
 export class Tomato implements Entity {
     kind = EntityTypes.TOMATO;
     scene: Scene | undefined;
+    index: number = 0;
 
     health: number = 5;
     alive: boolean = true;
@@ -48,22 +42,13 @@ export class Tomato implements Entity {
     invincibility: number = 0;
 
     // How many frames the enemies corpse will hang around for after death
-    despawnCounter: number = 120;
+    despawnCounter: number = 180;
 
     render() {
         let color = this.invincibility ? 'pink' : 'darkred';
         window.renderer.debug(this.getCollisionBounds(), color);
 
-        const posOffset: Vec2.Vec2 = [0, 20];
-        const frameSize: Vec2.Vec2 = [64, 84];
-
-        window.renderer.drawImagePart(
-            window.images[Images.TOMATO_SHEET],
-            [0, 0],
-            [68, 82],
-            Vec2.sub(this.pos, posOffset),
-            frameSize,
-        );
+        AnimateTomato(this);
 
     }
 
@@ -108,6 +93,12 @@ export class Tomato implements Entity {
 
 
         if (this.alive) {
+            this.animState = TomatoAnim.IDLE;
+
+            // If the tomato has fired recently, animate him as such
+            if (window.frame - this.frameLastFire < 20)
+                this.animState = TomatoAnim.SPITTING;
+
             // Check for collisions
             // Only interested in collisions with player's attacks (nail, shovel)
             const a = this.scene.entities
@@ -149,11 +140,23 @@ export class Tomato implements Entity {
                 char &&
                 char.alive &&
                 this.inRange &&
+                this.frameLastFire + 45 < window.frame &&
+                this.frameStunned + 70 < window.frame
+            )
+                this.animState = TomatoAnim.ANTICIPATION;
+
+            if (
+                char &&
+                char.alive &&
+                this.inRange &&
                 this.frameEnteredRange + 30 < window.frame &&
                 this.frameLastFire + 75 < window.frame &&
                 this.frameStunned + 100 < window.frame
             )
                 fire();
+
+            if (window.frame - this.frameStunned < 30)
+                this.animState = TomatoAnim.HURT;
 
         } else {
             // The tomato is dead :)

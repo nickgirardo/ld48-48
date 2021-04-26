@@ -11,7 +11,13 @@ export class Scene {
     entities: Entity[] = [];
     addEntity = (entity: Entity) => {
         entity.scene = this;
-        this.entities.push(entity);
+
+        // The returned value from push is the index into the array
+        const index = this.entities.push(entity);
+
+        // We give this to the entity so that different entities animations
+        // can be offset and don't sync
+        entity.index = index;
     };
     removeEntity = (entity: Entity) => {
         const pos = this.entities.indexOf(entity);

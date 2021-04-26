@@ -43,6 +43,8 @@ const fireDelay: {[a in Attacks]: number } = {
 export class Char implements Entity {
     kind = EntityTypes.CHAR;
     scene: Scene | undefined;
+    index: number = 0;
+
     animState: CharAnim = CharAnim.IDLE;
 
     alive: boolean = true;

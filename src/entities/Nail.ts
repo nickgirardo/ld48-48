@@ -14,6 +14,7 @@ enum Facing {
 export class Nail implements Entity {
     kind = EntityTypes.NAIL;
     scene: Scene | undefined;
+    index: number = 0;
 
     alive: boolean = true;
 

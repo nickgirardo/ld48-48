@@ -15,6 +15,7 @@ enum Facing {
 export class Vommit implements Entity {
     kind = EntityTypes.VOMMIT;
     scene: Scene | undefined;
+    index: number = 0;
 
     alive: boolean = true;
 

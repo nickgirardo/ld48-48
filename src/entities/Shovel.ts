@@ -11,6 +11,7 @@ import { Char } from './Char';
 export class Shovel implements Entity {
     kind = EntityTypes.SHOVEL;
     scene: Scene | undefined;
+    index: number = 0;
 
     alive: boolean = true;
 
