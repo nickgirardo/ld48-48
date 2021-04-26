@@ -12,8 +12,8 @@ import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 import { AnimateTomato, Anims, TomatoAnim } from '../Animation';
 
 enum Facing {
-    LEFT,
-    RIGHT,
+    LEFT = 'left',
+    RIGHT = 'right',
 }
 
 export class Tomato implements Entity {
@@ -46,7 +46,7 @@ export class Tomato implements Entity {
 
     render() {
         let color = this.invincibility ? 'pink' : 'darkred';
-        window.renderer.debug(this.getCollisionBounds(), color);
+        // window.renderer.debug(this.getCollisionBounds(), color);
 
         AnimateTomato(this);
 
@@ -140,8 +140,8 @@ export class Tomato implements Entity {
                 char &&
                 char.alive &&
                 this.inRange &&
-                this.frameLastFire + 45 < window.frame &&
-                this.frameStunned + 70 < window.frame
+                this.frameLastFire + 30 < window.frame &&
+                this.frameStunned + 55 < window.frame
             )
                 this.animState = TomatoAnim.ANTICIPATION;
 

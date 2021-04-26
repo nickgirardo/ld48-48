@@ -1,13 +1,15 @@
 // @ts-ignore
-import bananaSheet from  '../sprites/banana_sheet.png';
+import bananaSheet from '../sprites/banana_sheet.png';
 // @ts-ignore
-import tomatoSheet from  '../sprites/tomato_sheet.png';
+import tomatoSheet from '../sprites/tomato_sheet.png';
 // @ts-ignore
-import vommitSprite from  '../sprites/vommit.png';
+import tomatoSheetFlip from '../sprites/tomato_sheet_flipped.png';
 // @ts-ignore
-import nailSprite from  '../sprites/nail.png';
+import vommitSprite from '../sprites/vommit.png';
 // @ts-ignore
-import appleSprite from  '../sprites/apple.png';
+import nailSprite from '../sprites/nail.png';
+// @ts-ignore
+import appleSprite from '../sprites/apple.png';
 
 // TODO should src be a string? Is there a more specific type?
 const loadImage = (src: string): Promise<ImageBitmap> => 
@@ -30,6 +32,7 @@ export enum Images {
     CHAR_SHEET,
 
     TOMATO_SHEET,
+    TOMATO_SHEET_FLIP,
     BANANA_SHEET,
 
     VOMMIT,
@@ -40,6 +43,7 @@ export enum Images {
 export async function loadImages () {
     const banana = await loadImage(bananaSheet);
     const tomato = await loadImage(tomatoSheet);
+    const tomatoFlip = await loadImage(tomatoSheetFlip);
     const vommit = await loadImage(vommitSprite);
     const nail = await loadImage(nailSprite);
     const apple = await loadImage(appleSprite);
@@ -50,6 +54,7 @@ export async function loadImages () {
         [Images.CHAR_SHEET]: tomato,
 
         [Images.TOMATO_SHEET]: tomato,
+        [Images.TOMATO_SHEET_FLIP]: tomatoFlip,
         [Images.BANANA_SHEET]: banana,
         [Images.VOMMIT]: vommit,
         [Images.NAIL]: nail,

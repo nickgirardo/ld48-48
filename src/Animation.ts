@@ -16,7 +16,9 @@ export enum TomatoAnim {
 }
 
 export const AnimateTomato = (tomato: Tomato) => {
-    const sheet = window.images[Images.TOMATO_SHEET];
+    const sheet = tomato.facing === 'left' ?
+        window.images[Images.TOMATO_SHEET] :
+        window.images[Images.TOMATO_SHEET_FLIP];
 
     switch (tomato.animState) {
         case TomatoAnim.IDLE: {
@@ -30,10 +32,11 @@ export const AnimateTomato = (tomato: Tomato) => {
             window.renderer.drawImagePart(
                 sheet,
                 frame ? [68, 0] : [0, 0],
-                [64, 82],
+                [68, 86],
                 Vec2.sub(tomato.pos, posOffset),
                 frameSize,
             );
+
             return;
         }
         case TomatoAnim.ANTICIPATION: {
@@ -43,7 +46,7 @@ export const AnimateTomato = (tomato: Tomato) => {
             window.renderer.drawImagePart(
                 sheet,
                 [0, 86],
-                [64, 74],
+                [66, 74],
                 Vec2.sub(tomato.pos, posOffset),
                 frameSize,
             );
@@ -58,7 +61,7 @@ export const AnimateTomato = (tomato: Tomato) => {
             window.renderer.drawImagePart(
                 sheet,
                 [66, 86],
-                [64, 74],
+                [68, 74],
                 Vec2.sub(tomato.pos, posOffset),
                 frameSize,
             );
@@ -72,10 +75,11 @@ export const AnimateTomato = (tomato: Tomato) => {
             window.renderer.drawImagePart(
                 sheet,
                 [0, 165],
-                [64, 74],
+                [68, 74],
                 Vec2.sub(tomato.pos, posOffset),
                 frameSize,
             );
+
             return;
         }
         case TomatoAnim.DEAD:  {
@@ -89,6 +93,7 @@ export const AnimateTomato = (tomato: Tomato) => {
                 Vec2.sub(tomato.pos, posOffset),
                 frameSize,
             );
+
             return;
         }
     }
