@@ -2,6 +2,7 @@ import { Entity, EntityTypes } from '../Entity';
 
 import { Scene } from '../Scene';
 import { Keys, keysDown } from '../util/keyboard';
+import { vommitSound, deflectSound } from '../Audio';
 import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
@@ -26,8 +27,23 @@ export class Vommit implements Entity {
 
     facing: Facing = Facing.LEFT;
 
+    audio = vommitSound.getAudio();
+    deflectAudio = deflectSound.getAudio();
+
+    constructor() {
+        this.audio.play();
+    }
+
     render() {
         window.renderer.debug(this.getCollisionBounds(), 'purple');
+    }
+
+    remove(deflect: boolean = false) {
+        this.scene!.removeEntity(this);
+        this.audio.channels[0].buffer = null;
+        if(deflect)
+            this.deflectAudio.play();
+
     }
 
     update() {
@@ -44,7 +60,7 @@ export class Vommit implements Entity {
             .forEach(e => {
                 switch (e.kind) {
                     case EntityTypes.SHOVEL:
-                        this.scene!.removeEntity(this);
+                        this.remove(true);
                         return;
                 }
             });
@@ -52,19 +68,19 @@ export class Vommit implements Entity {
 
         this.lifetime--;
         if (!this.lifetime)
-            this.scene.removeEntity(this);
+            this.remove();
 
         // Clamp with x clearances (for ground collision)
         if (this.vel[0] > 0) {
             const posXClearance: number = ground.getPosXClearance(this.getCollisionBounds());
             if (!posXClearance)
-                this.scene.removeEntity(this);
+                this.remove();
 
             this.vel[0] = Math.min(posXClearance, this.vel[0]);
         } else {
             const negXClearance: number = ground.getNegXClearance(this.getCollisionBounds());
             if (!negXClearance)
-                this.scene.removeEntity(this);
+                this.remove();
 
             this.vel[0] = Math.max(negXClearance, this.vel[0]);
         }
