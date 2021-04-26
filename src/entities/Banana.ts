@@ -4,7 +4,7 @@ import { Scene } from '../Scene';
 import { Keys, keysDown } from '../util/keyboard';
 import * as Vec2 from '../Vec2';
 
-import { CollisionBoundry } from '../CollisionBoundry';
+import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
 enum BananaAnim {
     IDLE,
@@ -34,6 +34,9 @@ export class Banana implements Entity {
 
     animState: BananaAnim = BananaAnim.IDLE;
 
+    invincibility: number = 0;
+    frameStunned: number = 0;
+
     // TODO this might be helpful
     kind = EntityTypes.BANANA;
 
@@ -46,6 +49,37 @@ export class Banana implements Entity {
             return;
 
         const ground = this.scene.ground;
+
+        const takeHit = (e: Entity, damage: number) => {
+            // If the player has recently taken a hit, ignore this
+            if (this.invincibility)
+                return;
+
+            // TODO lose health
+            this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
+            this.invincibility = 60;
+            this.frameStunned = window.frame;
+        };
+
+        // Check for collisions
+        // Only interested in collisions with player's attacks (nail, shovel)
+        const a = this.scene.entities
+            .filter(e => [EntityTypes.NAIL, EntityTypes.SHOVEL].includes(e.kind))
+            .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
+            .forEach(e => {
+                switch (e.kind) {
+                    case EntityTypes.NAIL:
+                        takeHit(e, 1);
+                        this.scene!.removeEntity(e);
+                        return;
+                    case EntityTypes.SHOVEL:
+                        takeHit(e, 2);
+                        return;
+                }
+            });
+
+        if (this.invincibility)
+            this.invincibility--;
 
         // Gravity
         // TODO should this be stored somewhere so we don't accidentally give
@@ -67,11 +101,11 @@ export class Banana implements Entity {
             }
 
             // About to jump, anticipation here
-            if (window.frame - this.lastGroundedFrame > 30)
+            if (window.frame - this.lastGroundedFrame > 30 && window.frame - this.frameStunned > 105)
                 this.animState = BananaAnim.ANTICIPATION;
 
             // Jump here
-            if (window.frame - this.lastGroundedFrame > 45) {
+            if (window.frame - this.lastGroundedFrame > 45 && window.frame - this.frameStunned > 120) {
                 this.animState = BananaAnim.JUMPING;
                 this.lastJumpFrame = window.frame;
                 this.vel = Vec2.add(this.vel, fJump);
