@@ -2,6 +2,7 @@ import { Entity, EntityTypes } from '../Entity';
 
 import { Scene } from '../Scene';
 import { Keys, keysDown } from '../util/keyboard';
+import { jumpSound } from '../Audio';
 import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
@@ -158,6 +159,7 @@ export class Char implements Entity {
                 this.lastJumpFrame = window.frame;
                 this.animState = CharAnim.JUMPING;
                 this.vel[1] = Math.min(this.vel[1], fJump);
+                jumpSound.getAudio().play();
             }
 
             // Player not in attacking delay
