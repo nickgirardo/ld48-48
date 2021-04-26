@@ -11,6 +11,10 @@ module.exports = {
         use: 'ts-loader',
       },
       {
+        test: /\.png$/,
+        use: 'base64-inline-loader?name=[name].[ext]'
+      },
+      {
         test: /\.html$/,
         use: { loader: 'html-loader' },
       }

@@ -52,5 +52,10 @@ export default class Renderer {
             Math.ceil(size[1])
         );
     }
+
+    // TODO type img
+    drawImagePart(img: any, pos: Vec2.Vec2, logicalOrigin: Vec2.Vec2, visualOrigin: Vec2.Vec2, size: Vec2.Vec2) {
+
+    }
 }
 
