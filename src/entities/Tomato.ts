@@ -60,7 +60,6 @@ export class Tomato implements Entity {
         const ground = this.scene.ground;
 
         const char = this.scene.entities.find(e => e.kind === EntityTypes.CHAR);
-        console.log(char);
 
         const takeHit = (e: Entity, damage: number) => {
             // If the player has recently taken a hit, ignore this
@@ -134,6 +133,7 @@ export class Tomato implements Entity {
             // Fire a shot if in range for at least 30 frames
             if (
                 char &&
+                char.alive &&
                 this.inRange &&
                 this.frameEnteredRange + 30 < window.frame &&
                 this.frameLastFire + 75 < window.frame &&
