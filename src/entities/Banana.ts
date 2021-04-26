@@ -21,12 +21,16 @@ enum Facing {
 }
 
 export class Banana implements Entity {
+    kind = EntityTypes.BANANA;
     scene: Scene | undefined;
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [48, 92];
     vel: Vec2.Vec2 = [0, 0];
     friction: Vec2.Vec2 =  [0.3, 1];
     speed: number = 8;
+
+    alive: boolean = true;
+    health: number = 5;
 
     lastJump: Facing = Facing.LEFT;
     lastJumpFrame: number = 0;
@@ -37,8 +41,8 @@ export class Banana implements Entity {
     invincibility: number = 0;
     frameStunned: number = 0;
 
-    // TODO this might be helpful
-    kind = EntityTypes.BANANA;
+    // How long an enemy's corpse will remain after death
+    despawnCounter: number = 120;
 
     render() {
         window.renderer.debug(this.getCollisionBounds(), 'darkred');
@@ -55,31 +59,14 @@ export class Banana implements Entity {
             if (this.invincibility)
                 return;
 
-            // TODO lose health
             this.vel = this.pos[0] > e.pos[0] ? [30, -20] : [-30, -20];
             this.invincibility = 60;
             this.frameStunned = window.frame;
+
+            this.health -= damage;
+            if (this.health <= 0)
+                this.alive = false;
         };
-
-        // Check for collisions
-        // Only interested in collisions with player's attacks (nail, shovel)
-        const a = this.scene.entities
-            .filter(e => [EntityTypes.NAIL, EntityTypes.SHOVEL].includes(e.kind))
-            .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
-            .forEach(e => {
-                switch (e.kind) {
-                    case EntityTypes.NAIL:
-                        takeHit(e, 1);
-                        this.scene!.removeEntity(e);
-                        return;
-                    case EntityTypes.SHOVEL:
-                        takeHit(e, 2);
-                        return;
-                }
-            });
-
-        if (this.invincibility)
-            this.invincibility--;
 
         // Gravity
         // TODO should this be stored somewhere so we don't accidentally give
@@ -90,37 +77,65 @@ export class Banana implements Entity {
         const fJump: Vec2.Vec2 = [0, -25];
         const grounded: boolean = ground.getPosYClearance(this.getCollisionBounds()) === 0;
 
-        if (grounded) {
-            // The banana has just landed
-            if (this.lastGroundedFrame < this.lastJumpFrame) {
-                this.animState = BananaAnim.IDLE;
-                this.lastGroundedFrame = window.frame;
-                this.lastJump = this.lastJump === Facing.LEFT ?
-                    Facing.RIGHT :
-                    Facing.LEFT;
-            }
+        if (this.alive) {
+            // Check for collisions
+            // Only interested in collisions with player's attacks (nail, shovel)
+            const a = this.scene.entities
+                .filter(e => [EntityTypes.NAIL, EntityTypes.SHOVEL].includes(e.kind))
+                .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
+                .forEach(e => {
+                    switch (e.kind) {
+                        case EntityTypes.NAIL:
+                            takeHit(e, 1);
+                            this.scene!.removeEntity(e);
+                            return;
+                        case EntityTypes.SHOVEL:
+                            takeHit(e, 2);
+                            return;
+                    }
+                });
 
-            // About to jump, anticipation here
-            if (window.frame - this.lastGroundedFrame > 30 && window.frame - this.frameStunned > 105)
-                this.animState = BananaAnim.ANTICIPATION;
+            if (this.invincibility)
+                this.invincibility--;
 
-            // Jump here
-            if (window.frame - this.lastGroundedFrame > 45 && window.frame - this.frameStunned > 120) {
-                this.animState = BananaAnim.JUMPING;
-                this.lastJumpFrame = window.frame;
-                this.vel = Vec2.add(this.vel, fJump);
+            if (grounded) {
+                // The banana has just landed
+                if (this.lastGroundedFrame < this.lastJumpFrame) {
+                    this.animState = BananaAnim.IDLE;
+                    this.lastGroundedFrame = window.frame;
+                    this.lastJump = this.lastJump === Facing.LEFT ?
+                        Facing.RIGHT :
+                        Facing.LEFT;
+                }
+
+                // About to jump, anticipation here
+                if (window.frame - this.lastGroundedFrame > 30 && window.frame - this.frameStunned > 105)
+                    this.animState = BananaAnim.ANTICIPATION;
+
+                // Jump here
+                if (window.frame - this.lastGroundedFrame > 45 && window.frame - this.frameStunned > 120) {
+                    this.animState = BananaAnim.JUMPING;
+                    this.lastJumpFrame = window.frame;
+                    this.vel = Vec2.add(this.vel, fJump);
+                }
+            } else {
+                // The banana is not grounded
+                if (this.lastJump === Facing.LEFT) {
+                    this.vel = Vec2.add(this.vel, [this.speed, 0]);
+                } else {
+                    this.vel = Vec2.add(this.vel, [-this.speed, 0]);
+                }
+
+                // Check if we need to set the anim state to falling
+                if (this.vel[1] > 0)
+                    this.animState = BananaAnim.FALLING;
             }
         } else {
-            // The banana is not grounded
-            if (this.lastJump === Facing.LEFT) {
-                this.vel = Vec2.add(this.vel, [this.speed, 0]);
-            } else {
-                this.vel = Vec2.add(this.vel, [-this.speed, 0]);
-            }
-            
-            // Check if we need to set the anim state to falling
-            if (this.vel[1] > 0)
-                this.animState = BananaAnim.FALLING;
+            this.animState = BananaAnim.DEAD;
+            this.despawnCounter--;
+
+            if (!this.despawnCounter)
+                this.scene.removeEntity(this);
         }
 
 
