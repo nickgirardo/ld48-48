@@ -41,9 +41,9 @@ export class Vommit implements Entity {
     remove(deflect: boolean = false) {
         this.scene!.removeEntity(this);
         this.audio.channels[0].buffer = null;
+
         if(deflect)
             this.deflectAudio.play();
-
     }
 
     update() {

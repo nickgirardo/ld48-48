@@ -7,6 +7,7 @@ import * as Vec2 from '../Vec2';
 
 import { CollisionBoundry, checkOverlap } from '../CollisionBoundry';
 
+import { Vommit } from './Vommit';
 import { Shovel } from './Shovel';
 import { Nail } from './Nail';
 
@@ -128,7 +129,7 @@ export class Char implements Entity {
                         case EntityTypes.VOMMIT:
                             // TODO lose health
                             takeHit(e);
-                            this.scene!.removeEntity(e);
+                            (e as Vommit).remove(false);
                             return;
                     }
                 });
