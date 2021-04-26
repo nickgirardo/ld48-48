@@ -26,7 +26,7 @@ export const AnimateTomato = (tomato: Tomato) => {
             // Index is used to offset so that different entities don't sync up
             const frame = Math.floor((window.frame + (tomato.index * 21)) % 150 / 75);
 
-            const posOffset: Vec2.Vec2 = [0, 20];
+            const posOffset: Vec2.Vec2 = [0, 15];
             const frameSize: Vec2.Vec2 = [64, 84];
 
             window.renderer.drawImagePart(
@@ -40,13 +40,13 @@ export const AnimateTomato = (tomato: Tomato) => {
             return;
         }
         case TomatoAnim.ANTICIPATION: {
-            const posOffset: Vec2.Vec2 = [0, 10];
+            const posOffset: Vec2.Vec2 = [0, 6];
             const frameSize: Vec2.Vec2 = [64, 74];
 
             window.renderer.drawImagePart(
                 sheet,
                 [0, 86],
-                [66, 74],
+                [66, 76],
                 Vec2.sub(tomato.pos, posOffset),
                 frameSize,
             );
@@ -55,7 +55,7 @@ export const AnimateTomato = (tomato: Tomato) => {
         }
         case TomatoAnim.SPITTING: {
             // TODO using the anticipation anim for now :(
-            const posOffset: Vec2.Vec2 = [0, 10];
+            const posOffset: Vec2.Vec2 = [0, 6];
             const frameSize: Vec2.Vec2 = [64, 74];
 
             window.renderer.drawImagePart(
