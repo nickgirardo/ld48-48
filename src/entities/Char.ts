@@ -113,6 +113,7 @@ export class Char implements Entity {
             // Check for collisions
             const a = this.scene.entities
                 .filter(e => e !== this)
+                .filter(e => e.alive)
                 .filter(e => checkOverlap(e.getCollisionBounds(), this.getCollisionBounds()))
                 .forEach(e => {
                     switch (e.kind) {

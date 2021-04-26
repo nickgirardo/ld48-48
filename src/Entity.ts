@@ -9,6 +9,11 @@ export interface Entity {
     getCollisionBounds: () => CollisionBoundry;
     kind: EntityTypes;
     pos: Vec2;
+
+    // NOTE moreso that just if the entity is alive (for instance nails aren't)
+    // but if they are active
+    // This allows us to easily filter corpses out of collision detection
+    alive: boolean;
 }
 
 export enum EntityTypes {

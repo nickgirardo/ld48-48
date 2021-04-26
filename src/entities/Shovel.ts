@@ -12,6 +12,8 @@ export class Shovel implements Entity {
     kind = EntityTypes.SHOVEL;
     scene: Scene | undefined;
 
+    alive: boolean = true;
+
     pos: Vec2.Vec2 = [0, 0];
     size: Vec2.Vec2 = [64, 32];
     offset: Vec2.Vec2 = [0, 0];
