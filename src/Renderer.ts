@@ -63,8 +63,8 @@ export default class Renderer {
             img,
             Math.floor(scaledPos[0]),
             Math.floor(scaledPos[1]),
-            Math.floor(scaledSize[0]),
-            Math.floor(scaledSize[1]),
+            Math.ceil(scaledSize[0]),
+            Math.ceil(scaledSize[1]),
         );
     }
     drawImagePart(img: ImageBitmap, sheetPos: Vec2.Vec2, sheetSize: Vec2.Vec2, destPos: Vec2.Vec2, destSize: Vec2.Vec2) {
@@ -81,8 +81,8 @@ export default class Renderer {
             sheetSize[1],
             Math.floor(scaledPos[0]),
             Math.floor(scaledPos[1]),
-            Math.floor(scaledSize[0]),
-            Math.floor(scaledSize[1]),
+            Math.ceil(scaledSize[0]),
+            Math.ceil(scaledSize[1]),
         );
     }
 }

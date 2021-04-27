@@ -18,6 +18,8 @@ import applePickupSprite from '../sprites/apple_pickup.png';
 import nailLeftSprite from '../sprites/nail_projectile_left.png';
 // @ts-ignore
 import nailRightSprite from '../sprites/nail_projectile_right.png';
+// @ts-ignore
+import caveSheet from '../sprites/cave_tilesheet.png';
 
 // TODO should src be a string? Is there a more specific type?
 const loadImage = (src: string): Promise<ImageBitmap> => 
@@ -52,6 +54,8 @@ export enum Images {
 
     NAIL_LEFT,
     NAIL_RIGHT,
+
+    CAVE_SHEET,
 };
 
 export async function loadImages () {
@@ -68,6 +72,8 @@ export async function loadImages () {
 
     const nailLeft = await loadImage(nailLeftSprite);
     const nailRight = await loadImage(nailRightSprite);
+
+    const cave = await loadImage(caveSheet);
 
     window.images = {
         // TODO
@@ -86,5 +92,7 @@ export async function loadImages () {
 
         [Images.NAIL_LEFT]: nailLeft,
         [Images.NAIL_RIGHT]: nailRight,
+
+        [Images.CAVE_SHEET]: cave,
     };
 }
