@@ -32,9 +32,9 @@ const startGame = () => {
     char.pos = [350, 250];
     scene.addEntity(char);
 
-    const tomato2 = new Tomato();
-    tomato2.pos = [550, 150];
-    scene.addEntity(tomato2);
+    const banana = new Banana();
+    banana.pos = [550, 150];
+    scene.addEntity(banana);
 
     const tomato = new Tomato();
     tomato.pos = [1000, 150];
